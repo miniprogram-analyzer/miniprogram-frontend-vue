@@ -11,7 +11,9 @@
   <el-collapse-item title="改动原来代码后onLoad函数出错" name="3">
     <div>原因1：对函数内部的嵌套函数不清楚（多去编写代码这个问题会被解决)</div>
     <div>复现：</div>
-    <el-image style="width: 100px; height: 100px" :src="url1" :fit="fit"></el-image>
+    <div class="demo-image__preview">
+      <el-image style="width: 100px; height: 100px" :src="url1" :preview-src-list="srcList1"></el-image>
+    </div>
     <div>原因2：onLoad函数没有删全，只删了上半部分，下半部分没有删掉</div>
   </el-collapse-item>
   <el-collapse-item title="怎么改margin创造的边框的颜色" name="4">
@@ -160,7 +162,9 @@
   <el-collapse-item title="我配置了两个环境，如何删掉其中的一个（亦或如何改变代码初始化默认环境）" name="46">
     <div>回答：试试修改云能力初始化函数wx.cloud.init()的参数。如果有两个环境，则修改env属性（这个属性默认为空）为自己需要的环境的环境名</div>
     <div>示例：</div>
-    <el-image style="width: 100px; height: 100px" :src="url2" :fit="fit"></el-image>
+    <div class="demo-image__preview">
+      <el-image style="width: 100px; height: 100px" :src="url2" :preview-src-list="srcList2"></el-image>
+    </div>
     <div>如果想了解更多关于该初始化函数的内容，试试看一下本文档的内容哟：</div>
     <a href="https://developers.weixin.qq.com/miniprogram/dev/wxcloud/reference-client-api/init.html">https://developers.weixin.qq.com/miniprogram/dev/wxcloud/reference-client-api/init.html</a>
   </el-collapse-item>
@@ -263,7 +267,13 @@
         activeNames: ['1'],
         fits: ['fill', 'contain', 'cover', 'none', 'scale-down'],
         url1: 'http://m.qpic.cn/psc?/V13QIILW3g4iNW/UbDh**QEFrkBQEvKgeO0F5sgcFATU01CLKyAyaPMM21MtY2svwCrZ8iqpl2ZY8*Cj3lnp4L0GWCFJbWlxQZWcA!!/mnull&bo=bwEfAQAAAAADB1I!&rf=photolist&t=5',
+        srcList1:[
+          'http://m.qpic.cn/psc?/V13QIILW3g4iNW/UbDh**QEFrkBQEvKgeO0F5sgcFATU01CLKyAyaPMM21MtY2svwCrZ8iqpl2ZY8*Cj3lnp4L0GWCFJbWlxQZWcA!!/mnull&bo=bwEfAQAAAAADB1I!&rf=photolist&t=5'
+        ],
         url2: 'http://m.qpic.cn/psc?/V13QIILW3g4iNW/UbDh**QEFrkBQEvKgeO0FxmTl4uLl6.BYGomo*qOUzdQQpkmkMeY9BsPKUdNDw3H3Vd*B0XysafpnmPRZI9pzw!!/mnull&bo=KgFzACoBcwADCSw!&rf=photolist&t=5',
+        srcList2:[
+          'http://m.qpic.cn/psc?/V13QIILW3g4iNW/UbDh**QEFrkBQEvKgeO0FxmTl4uLl6.BYGomo*qOUzdQQpkmkMeY9BsPKUdNDw3H3Vd*B0XysafpnmPRZI9pzw!!/mnull&bo=KgFzACoBcwADCSw!&rf=photolist&t=5'
+        ],
         url3: 'http://m.qpic.cn/psc?/V13QIILW3g4iNW/UbDh**QEFrkBQEvKgeO0F6XMIxREQuvIb0m3rFovshu6uQ8HvmuYc0Y6BRe.kBJMI3mZRCOuUZ85FKT*YlAr9Q!!/mnull&bo=GQHJAAAAAAADB*M!&rf=photolist&t=5',
         srcList3:[
           'http://m.qpic.cn/psc?/V13QIILW3g4iNW/UbDh**QEFrkBQEvKgeO0F6XMIxREQuvIb0m3rFovshu6uQ8HvmuYc0Y6BRe.kBJMI3mZRCOuUZ85FKT*YlAr9Q!!/mnull&bo=GQHJAAAAAAADB*M!&rf=photolist&t=5'
