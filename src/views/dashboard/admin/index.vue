@@ -18,7 +18,6 @@
 </template>
 
 <script>
-/*import TransactionTable from './components/TransactionTable'*/
 import BoxCard from './components/BoxCard'
 import BarChart from './components/BarChart'
 
