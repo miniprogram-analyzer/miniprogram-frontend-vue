@@ -7,18 +7,20 @@
 
     <el-row :gutter="8">
       <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 18}" :xl="{span: 12}" style="padding-right:8px;margin-bottom:30px;">
-        <transaction-table />
+       <bar-chart />
       </el-col>
       <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}" style="padding-left:8px;margin-bottom:30px;">
         <box-card />
       </el-col>
     </el-row>
+
   </div>
 </template>
 
 <script>
-import TransactionTable from './components/TransactionTable'
+/*import TransactionTable from './components/TransactionTable'*/
 import BoxCard from './components/BoxCard'
+import BarChart from './components/BarChart'
 
 const lineChartData = {
   newVisitis: {
@@ -42,8 +44,8 @@ const lineChartData = {
 export default {
   name: 'DashboardAdmin',
   components: {
-    TransactionTable,
-    BoxCard
+    BarChart,
+    BoxCard,
   },
   data() {
     return {

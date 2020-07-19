@@ -1,6 +1,9 @@
 <template>
-  <el-collapse v-model="activeNames" @change="handleChange">
-  <el-collapse-item title="报错类型：page is not defined" name="1">
+  <el-collapse accordion>
+  <el-collapse-item>
+    <template slot="title">
+      报错类型：page is not defined
+    </template>
     <div>原因：这往往是index.js里面Page的P没有大写导致的，也有可能是app.json文件里面页面路径配置不对</div>
     <div>解决方法：1.检查一下index.js文件中Page里面的P是否大写了。2.检查一下app.json文件里面的路径配置</div>
     <div>后果：页面无法正常显示，一片空白</div>
@@ -288,11 +291,7 @@
         ]
       };
     },
-    methods: {
-      handleChange(val) {
-        console.log(val);
-      }
-    }
+    
   }
 </script>
 
