@@ -20,6 +20,15 @@
       label="问题"
       prop="name">
     </el-table-column>
+    <el-table-column
+      prop="tag"
+      label="标签">
+      <template slot-scope="scope">
+        <el-tag
+          :type="scope.row.tag"
+          disable-transitions>{{scope.row.tag}}</el-tag>
+      </template>
+    </el-table-column>
   </el-table>
   
 </template>
@@ -32,26 +41,32 @@
           id: '1',
           name: '报错类型：page is not defined',
           reason: '原因：这往往是index.js里面Page的P没有大写导致的，也有可能是app.json文件里面页面路径配置不对；解决方法：1.检查一下index.js文件中Page里面的P是否大写了。2.检查一下app.json文件里面的路径配置',
+          tag: '页面'
         }, {
           id: '2',
           name: '给云函数安装依赖时怎么都不能成功',
-          reason: '直接部署，不用安装，不会造成其他不良后果'
+          reason: '直接部署，不用安装，不会造成其他不良后果',
+          tag: '云函数安装依赖'
         },{
           id: '3',
           name: '改动原来代码后onLoad函数出错',
-          reason: '1：对函数内部的嵌套函数不清楚（多去编写代码这个问题会被解决）;2：onLoad函数没有删全，只删了上半部分，下半部分没有删掉'
+          reason: '1：对函数内部的嵌套函数不清楚（多去编写代码这个问题会被解决）;2：onLoad函数没有删全，只删了上半部分，下半部分没有删掉',
+          tag: 'onLoad函数'
         },{
           id: '4',
           name:'怎么改margin创造的边框的颜色',
-          reason: '这是错误的认识，  margin不创造边框，边框用border。'
+          reason: '这是错误的认识，  margin不创造边框，边框用border。',
+          tag: '颜色'
         },{
           id: '5',
           name: '数据库不显示上传的内容',
-          reason: '解决方案：1.尝试刷新 2.注意：集合名里面的内容和代码里面的要一致。'
+          reason: '解决方案：1.尝试刷新 2.注意：集合名里面的内容和代码里面的要一致。',
+          tag: '数据库', 
         },{
           id: '6',
           name: '已经显示正确的结果，但云函数那块（queey函数）还是有报错',
-          reason: '解决方案：1.每次做修改后重新部署，并且刷新一下。2.仔细检查一下queey函数的内容是否正确（包含使用的逗号等）。'
+          reason: '解决方案：1.每次做修改后重新部署，并且刷新一下。2.仔细检查一下queey函数的内容是否正确（包含使用的逗号等）。',
+          tag: '云函数'
         },{
           id: '7',
           name: '什么时候用双引号什么时候用单引号？',
