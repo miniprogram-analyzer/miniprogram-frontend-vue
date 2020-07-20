@@ -18,8 +18,9 @@
 </template>
 
 <script>
-import BoxCard from './components/BoxCard'
+
 import BarChart from './components/BarChart'
+import BoxCard from './components/BoxCard'
 
 const lineChartData = {
   newVisitis: {
