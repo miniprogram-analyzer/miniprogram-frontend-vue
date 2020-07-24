@@ -25,14 +25,14 @@
       label="标签"
       :filters="[{ text: 'json', value: 'json' }, { text: 'wxss', value: 'wxss' },{text: 'wxml', value: 'wxml'},{text: 'js',value: 'js'},{text: '云函数',value: '云函数'},{text: '数据库',value: '数据库'},{text: '报错',value: '报错'},{text: '路径',value: '路径'},{text: '预览',value: '预览'}]"
       :filter-method="filterTag"
-      filter-placement="bottom-end">
+      filter-placement="bottom-end" width="300">
       <template slot-scope="scope">
         <el-tag
           :type="scope.row.tag"
           disable-transitions>{{scope.row.tag}}</el-tag>
       </template>
     </el-table-column>
-    <el-table-column prop="warehouseName" label="库房" :show-overflow-tooltip="true" header-align="left" align="left">
+    <el-table-column prop="warehouseName" label="库房" :show-overflow-tooltip="true" header-align="left" align="left" width="250"> 
         <template slot-scope="scope">
             {{scope.row.warehouseName}}
         </template>
@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import tableRouter from '../../../../router/modules/table'
   export default {
     data() {
       return {

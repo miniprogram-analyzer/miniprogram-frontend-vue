@@ -358,6 +358,24 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/search',
+    component: Layout,
+    redirect: '/search/index',
+    name: 'search',
+    meta: {
+      title: 'search',
+      icon: 'search'
+    },
+    children: [
+      {
+        path: 'index',
+        component: ()=>import('@/views/search/index'),
+        name: 'exportExcel',
+        meta: { title: 'exportExcel' }
+      }
+    ]
+  },
 
   /*{
     path: 'external-link',
