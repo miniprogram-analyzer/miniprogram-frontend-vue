@@ -1,6 +1,7 @@
 <template>
   <div class="app-container documentation-container">
      <a class="document-btn" target="_blank" href="https://oursparkspace.cn">火花空间</a>
+     <a class="document-btn" target="_blank" href="https://pan.baidu.com/s/1CliU4XgtqFQ6YhLkUHDQyA">菜鸟教程</a>
   </div>
 </template>
 

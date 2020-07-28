@@ -108,7 +108,7 @@ export const constantRoutes = [
         meta: { title: 'Profile', icon: 'user', noCache: true }
       }
     ]
-  }
+  },
 ]
 
 /**
@@ -371,8 +371,8 @@ export const asyncRoutes = [
       {
         path: 'index',
         component: ()=>import('@/views/search/index'),
-        name: 'exportExcel',
-        meta: { title: 'exportExcel' }
+        name: 'search',
+        meta: { title: 'search' }
       }
     ]
   },
@@ -382,7 +382,7 @@ export const asyncRoutes = [
     component: Layout,
     children: [
       {
-        path: 'https://github.com/PanJiaChen/vue-element-admin',
+        path: 'https://pan.baidu.com/s/1k89ZOPk-NTCjgzoQzX6r0g',
         meta: { title: 'External Link', icon: 'link' }
       }
     ]

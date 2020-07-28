@@ -1,14 +1,28 @@
 <template>
   <div id="app">
+    
+    <el-autocomplete
+      v-model="state"
+      :fetch-suggestions="querySearchAsync"
+      placeholder="输入遇到的问题吧"
+      :hide-loading="true"
+      :autofocus="true"
+      :trigger-on-focus="false"
+      style="width: 700px;margin: 16px;border-radius: 20pt;overflew: hidden"
+      @select="handleSelect"
+      @change="handleChange"
+    />
+    
     <el-row :gutter="8">
       <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 24}" :xl="{span: 12}" style="padding-right:8px;margin-bottom:30px;">
+        
        <bug-table />
       </el-col>
     </el-row>
+  
     <el-backtop target=".page-component__scroll .el-scrollbar__wrap" />
     <h4 v-if="seen" style="margin:16px">看看你的问题是不是这些，其他同学也遇到了哟</h4>
     <el-table
-      v-if="seen"
       :data="tableData"
       style="width: 100%"
     >
@@ -184,18 +198,56 @@ export default {
       }
       this.seen = false;
     },
-    handleSelect(item) {
+   /*handleSelect(item) {
+      console.log(this.tableData.length)
       console.log(item)
+      while(this.tableData.length !=0)
+      {
+        this.tableData.pop()
+      }
+      this.seen = false
+      this.tableData.push(item)
     },
-    /*show : function (results){
-    for(var i = 0;i <results.length;i++){
-      console.log(app.tableData.length)
-      app.tableData[i].value = results[i].value;
-      //app.tableData[i].reasons = results[i].reasons;
-      //app.tableData[i].solve = results[i].solve;
-      //app.tableData[i].reg = ''
-  }
-}*/
+    handleChange(item){
+      console.log(item.split("").length)
+      if(item.split("").length == 0)
+      {
+        this.seen = true
+        var data = [
+         {
+          value: "改动原来代码后onLoad函数出错",
+          reasons: "1.对函数内部的嵌套函数不清楚。2.onLoad函数没有删全，只删了上半部分，下半部分没有删掉",
+          solve :"1.多去编写代码这个问题会被解决。2.检查一下onLoad函数的完整性。",
+          tag :"onLoad函数" + " js"},
+         { value: '图片无法显示（音频无法播放）（会出现报错：Failed to load local image resource /images/xx.png）',
+          reasons: '1.图片（音频）的名称里面混有中文字符（包含中文逗号等）。2.是在代码中图片（音频）的路径不对' +
+          '3.可能图片的位置被无意间改动了。4.图片命名里可能有空格。',
+          solve: '1.检查一下图片（音频）的名称里面是否有中文字符，如果有，对图片（音频）文件重命名。2.检查一下代码里面所写的程序路径是否正确。' +
+          '3.回想一下之前有没有把图片（音频）移动了位置，如果图片移动过位置的话，在小程序里面也要改相应的路径哟。4.注意这些路径里面的空格，可能会很坑！',
+          tag: '图片' + ' 音频' + ' Failed to load'},
+         { value: "显示上传成功了，但是数据库里面没有需要的东西，且没有报错（或者是数据上传得太慢了）",
+          reasons: "1. wxml文件中与绑定上传相关的代码（如bindinput）拼写有误。2.有可能是data后面没有加数组下标（e.g：data[0]）。" +
+          '（note: 这时会出现提示：Setting data field "xx" to undefined is invalid。因为data是数组名，无法从数组名中读取信息（具体原因将在c++课程中第四章学习））'
+          + "3.数据库中的集合名和代码里面的集合名不一致。",
+          solve :"1.尝试刷新，有时候这里反应很慢 2.试试检查一下wxml文件中有关的地方，这里拼写不对是不会报错的哟。3. 试试给data数组添加下标。" +
+          "4 注意检查代码中的集合名与数据库中的集合名是否一致。",
+          tag :"没有报错" + " js" + "上传" },
+         { value: "在手写体识别时，出现签名串错误，在多次检查，重做后，问题没有解决。并且出现了新的报错：uploadFile：fail time out",
+          reasons: "1.签名串本身有错误，比如说少了一个字母。2.签名串某一处（特别是结尾与开头处）出现空格。",
+          solve :"1.检查一下签名串中是否出现空格，这个点很坑！2.检查一下签名串自身有没有缺少字母！",
+          tag :"签名串错误" + " js" + "uploadFile" },
+         { value: "读取数据库中数据时没有报错，但是就是读取不出来",
+          reasons: "在云函数中读取函数中写的数据库名与js中读取函数中写的数据库名字不一样。",
+          solve :"试试检查一下云函数中的数据库名与js中读取函数的数据库名是否一致。",
+          tag :"读取" + " js" }
+        ]
+        this.tableData.pop();
+        for(var i=0;i<data.length;i++)
+        {
+           this.tableData.push(data[i])
+        }
+      }
+    }*/
   }
 }
 function located(state,queryString){
