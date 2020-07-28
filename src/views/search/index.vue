@@ -1,17 +1,7 @@
 <template>
   <div id="app">
     
-    <el-autocomplete
-      v-model="state"
-      :fetch-suggestions="querySearchAsync"
-      placeholder="输入遇到的问题吧"
-      :hide-loading="true"
-      :autofocus="true"
-      :trigger-on-focus="false"
-      style="width: 700px;margin: 16px;border-radius: 20pt;overflew: hidden"
-      @select="handleSelect"
-      @change="handleChange"
-    />
+    
     
     <el-row :gutter="8">
       <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 24}" :xl="{span: 12}" style="padding-right:8px;margin-bottom:30px;">
@@ -19,7 +9,7 @@
        <bug-table />
       </el-col>
     </el-row>
-  
+  <!--
     <el-backtop target=".page-component__scroll .el-scrollbar__wrap" />
     <h4 v-if="seen" style="margin:16px">看看你的问题是不是这些，其他同学也遇到了哟</h4>
     <el-table
@@ -53,6 +43,7 @@
         prop="tag"
       />
     </el-table>
+    -->
   </div>
 </template>
 
