@@ -11,6 +11,12 @@
         <box-card />
       </el-col>
       -->
+     <h1 class="introduction">为代码初学者提供了一个可以获取所需代码，进行自主学习，自主发现错误，认识错误的平台，通过对所上传代码中常见错误进行识别，并在线反馈错误原因</h1>
+     
+     <li class="introduction"><router-link to="/chacuo">上传代码进行纠错</router-link></li>
+     <li class="introduction"><router-link to="/search">问题搜索</router-link></li>
+     <li class="introduction"><router-link to="/documentation">学习相关文档</router-link></li>
+     
     </el-row>
     <el-autocomplete
       v-model="state"
@@ -23,6 +29,7 @@
       @select="handleSelect"
       @change="handleChange"
     />
+    <router-link :to="{path:'search'}" class="size">没有搜到?去bug库里面看看吧</router-link>
     <el-backtop target=".page-component__scroll .el-scrollbar__wrap" />
     <h4 v-if="seen" style="margin:16px">看看你的问题是不是这些，其他同学也遇到了哟</h4>
     <el-table
@@ -323,4 +330,11 @@ function located(state,queryString){
     margin-bottom: 0;
     width: 50%;
   }
+.size{
+  font-size: 13px;
+  color:rgb(102, 189, 230);
+}
+.introduction{
+  font-size: 15px;
+}
 </style>

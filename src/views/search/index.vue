@@ -2,53 +2,22 @@
   <div id="app">
     
     
-    
+    <router-link :to="{path:'clipboard'}">tiwen</router-link> 
     <el-row :gutter="8">
       <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 24}" :xl="{span: 12}" style="padding-right:8px;margin-bottom:30px;">
         
        <bug-table />
       </el-col>
     </el-row>
-  <!--
-    <el-backtop target=".page-component__scroll .el-scrollbar__wrap" />
-    <h4 v-if="seen" style="margin:16px">看看你的问题是不是这些，其他同学也遇到了哟</h4>
-    <el-table
-      :data="tableData"
-      style="width: 100%"
-    >
-      <el-table-column type="expand">
-        <template slot-scope="props">
-          <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="问题描述">
-              <span>{{ props.row.value }}</span>
-            </el-form-item>
-            <el-form-item label="原因">
-              <span>{{ props.row.reasons }}</span>
-            </el-form-item>
-            <el-form-item label="解决方案">
-              <span>{{ props.row.solve }}</span>
-            </el-form-item>
-            <el-form-item label="标签">
-              <span>{{ props.row.tag }}</span>
-            </el-form-item>
-          </el-form>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="问题描述"
-        prop="value"
-      />
-      <el-table-column
-        label="标签"
-        prop="tag"
-      />
-    </el-table>
-    -->
+    <el-row :gutter="8">
+      <el-col :xs="{span: 24}" :sm="{span: 24}" :md="{span: 24}" :lg="{span: 24}" :xl="{span: 12}" style="padding-right:8px;margin-bottom:30px;">
+       <li class="find"><router-link to="/clipboard">没有找到？那直接去提问吧</router-link></li>
+      </el-col>  
+    </el-row> 
   </div>
 </template>
 
-<script src="https://unpkg.com/vue/dist/vue.js"></script>
-<script src="https://unpkg.com/element-ui@2.13.2/lib/index.js"></script>
+
 <script type="module">
 
 import BugTable from './components/BugTable'
@@ -262,5 +231,10 @@ function located(state,queryString){
     margin-right: 0;
     margin-bottom: 0;
     width: 50%;
+  }
+  .find{
+    font-size: 13px;
+    color: rgb(102, 189, 230);
+    margin-left: 1000px;
   }
 </style>

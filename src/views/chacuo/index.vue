@@ -1,5 +1,6 @@
 <template>
   <div class="app-container documentation-container">
+    <!--
     <div class="editor">
       <input v-model="message" placeholder="请在此输入问题标题" class="title-input">
       <div class="editor-all">
@@ -163,6 +164,10 @@
         </div>
       </div>
     </div>
+    -->
+    <iframe style="width:1600px;height:500px;" src="/jshint.html" />
+    <iframe style="width:1600px;height:500px;" src="/Fast XML Parser.html" />
+    <li class="find"><router-link to="/clipboard">还没有解决问题？直接去提问吧</router-link></li>
   </div>
 </template>
 
@@ -504,4 +509,10 @@ li[data-done="false"] {
     text-align: center;
   }
 }
+
+.find{
+    font-size: 13px;
+    color: rgb(102, 189, 230);
+    margin-left: 800px;
+  }
 </style>

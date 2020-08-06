@@ -83,7 +83,7 @@ export const constantRoutes = [
       }
     ]
   },
-  {
+  /*{
     path: '/documentation',
     component: Layout,
     children: [
@@ -94,7 +94,7 @@ export const constantRoutes = [
         meta: { title: '文档', icon: 'documentation', affix: true }
       }
     ]
-  },
+  },*/
   {
     path: '/profile',
     component: Layout,
@@ -345,16 +345,36 @@ export const asyncRoutes = [
       }
     ]
   },*/
+  {
+    path: '/documentation',
+    component: Layout,
+    redirect: '/documentation/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/documentation/index'),
+        name: 'Documentation',
+        meta: { title: '文档', icon: 'documentation'}
+      },
+      
+    ]
+  },
 
   {
     path: '/clipboard',
     component: Layout,
+    redirect: '/clipboard/index',
+    name: 'clipboard',
+    meta:{
+      title: 'clipboard',
+      icon: 'clipboard'
+    },
     children: [
       {
         path: 'index',
         component: () => import('@/views/clipboard/index'),
         name: 'ClipboardDemo',
-        meta: { title: '代码上传页', icon: 'clipboard' }
+        meta: { title: '问题编辑页'}
       }
     ]
   },
@@ -372,7 +392,25 @@ export const asyncRoutes = [
         path: 'index',
         component: ()=>import('@/views/search/index'),
         name: 'search',
-        meta: { title: 'search' }
+        meta: { title: 'bug库' }
+      }
+    ]
+  },
+  {
+    path: '/chacuo',
+    component: Layout,
+    redirect: '/chacuo/index',
+    name: 'chacuo',
+    meta:{
+      title: '代码上传页',
+      icon: 'zip'
+    },
+    children:[
+      {
+        path: 'index',
+        component: ()=>import('@/views/chacuo/index'),
+        name: 'chacuo',
+        meta:{title: '代码上传页'}
       }
     ]
   },
