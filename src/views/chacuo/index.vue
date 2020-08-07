@@ -1,5 +1,16 @@
 <template>
   <div class="app-container documentation-container">
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="js" name="first">
+        <iframe style="width:1000px;height:500px;" src="/jshint.html" />
+      </el-tab-pane>
+      <el-tab-pane label="xml" name="second">
+        <iframe style="width:1000px;height:500px;" src="/Fast XML Parser.html" />
+      </el-tab-pane>
+      <el-tab-pane label="css" name="third">
+        <iframe style="width:1000px;height:500px;" src="http://localhost:8081/css-validator/#validate_by_input" />
+      </el-tab-pane>
+    </el-tabs>
     <!--
     <div class="editor">
       <input v-model="message" placeholder="请在此输入问题标题" class="title-input">
@@ -165,8 +176,8 @@
       </div>
     </div>
     -->
-    <iframe style="width:1600px;height:500px;" src="/jshint.html" />
-    <iframe style="width:1600px;height:500px;" src="/Fast XML Parser.html" />
+    
+    
     <li class="find"><router-link to="/clipboard">还没有解决问题？直接去提问吧</router-link></li>
   </div>
 </template>
@@ -223,6 +234,7 @@ export default {
   },
   data() {
     return {
+      activeName: 'second',
       editor: new Editor({
         extensions: [
           new Blockquote(),
@@ -313,6 +325,9 @@ export default {
     },
     changeFlag(t) {
       this.active[t] = !this.active[t]
+    },
+    handleClick(tab, event) {
+      console.log(tab, event);
     }
   }
 }
