@@ -52,13 +52,34 @@ export const constantRoutes = [
   },
   {
     path: '/login',
-    component: () => import('@/views/login/index'),
-    hidden: true
+    component: Layout,
+    redirect: '/login/index',
+    children:[
+      {
+        path:'index',
+        component: () => import('@/views/login/index'),
+        name:'Login',
+        meta:{title:'登录',icon: 'icon'}
+      }
+    ]
   },
   {
     path: '/auth-redirect',
     component: () => import('@/views/login/auth-redirect'),
     hidden: true
+  },
+  {
+    path: '/register',
+    component: Layout,
+    redirect: '/register/index',
+    children:[
+      {
+        path:'index',
+        component: () => import('@/views/register/index'),
+        name:'Register',
+        meta:{title:'注册',icon: 'theme'}
+      }
+    ]
   },
   /*{
     path: '/404',
