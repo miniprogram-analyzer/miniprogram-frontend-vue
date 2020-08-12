@@ -50,6 +50,15 @@ export function validUpperCase(str) {
  * @param {string} str
  * @returns {Boolean}
  */
+export function validNumber(str) {
+  const reg = /^[0-9]+$/
+  return reg.test(str)
+}
+
+/**
+ * @param {string} str
+ * @returns {Boolean}
+ */
 export function validAlphabets(str) {
   const reg = /^[A-Za-z]+$/
   return reg.test(str)

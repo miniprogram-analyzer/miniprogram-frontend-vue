@@ -32,6 +32,7 @@
             v-model="loginForm.password"
             :type="passwordType"
             placeholder="输入密码"
+            id="password"
             name="password"
             tabindex="2"
             autocomplete="on"
@@ -52,11 +53,11 @@
           </span>
           <el-input
             :key="passwordType"
-            ref="password"
-            v-model="loginForm.password"
+            ref="password2"
+            v-model="loginForm.password2"
             :type="passwordType"
             placeholder="确认密码"
-            name="password"
+            name="password2"
             tabindex="3"
             autocomplete="on"
             @keyup.native="checkCapslock"
@@ -69,15 +70,15 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-form-item prop="student number">
+      <el-form-item prop="number">
         <span class="svg-container">
           <svg-icon icon-class="guide" />
         </span>
         <el-input
-          ref="student number"
-          v-model="loginForm.username"
+          ref="number"
+          v-model="loginForm.number"
           placeholder="输入学号"
-          name="student number"
+          name="number"
           type="text"
           tabindex="4"
           autocomplete="on"
@@ -92,22 +93,40 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+import { validUsername, validNumber } from '@/utils/validate'
 
 
 export default {
   name: 'Register',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+      if (value==" " ||value==null) {
+        callback(new Error('用户名不能为空'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        console.log(value)
+      if (value.length < 7||value.length>21) {
+        callback(new Error('请输入8~20位的账户密码'))
+      } else {
+        callback()
+      }
+    }
+    const validatePassword2 = (rule, value, callback) => {
+        var password = document.getElementById('password').value
+        console.log(password)
+      if (value !=password) {
+        callback(new Error('密码不一致'))
+      } else {
+        callback()
+      }
+    }
+    const validateNumber = (rule, value, callback) => {
+        console.log(value)
+      if (value.length != 10 ||!validNumber(value)) {
+        callback(new Error('学号错误'))
       } else {
         callback()
       }
@@ -116,10 +135,14 @@ export default {
       loginForm: {
         username: '',
         password: '',
+        password2:'',
+        number: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        password2:[{ required: true, trigger: 'blur', validator: validatePassword2 }],
+        number: [{ required: true, trigger: 'blur', validator: validateNumber }],
       },
       passwordType: 'password',
       capsTooltip: false,
@@ -170,6 +193,7 @@ export default {
       })
     },
     handleLogin() {
+        
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
@@ -178,14 +202,16 @@ export default {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
             })
+            /*
             .catch(() => {
               this.loading = false
-            })
-        } else {
+            })*/
+        }/* else {
           console.log('error submit!!')
           return false
-        }
+        }*/
       })
+      
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {

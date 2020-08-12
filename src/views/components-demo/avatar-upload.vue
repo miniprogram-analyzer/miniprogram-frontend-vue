@@ -17,10 +17,18 @@
       @close="close"
       @crop-upload-success="cropSuccess"
     />
+    <div>
     <el-input placeholder="姓名" v-model="input1" class="inputclass"></el-input>
+    </div>
+    <div>
     <el-input placeholder="学号" v-model="input2" class="inputclass"></el-input>
+    </div>
+    <div>
     <el-input placeholder="学校" v-model="input3" class="inputclass"></el-input>
+    </div>
+    <div>
     <el-input placeholder="电子邮箱" v-model="input4" class="inputclass"></el-input>
+    </div>
   </div>
 </template>
 
@@ -64,5 +72,6 @@ export default {
   .inputclass{
     margin-bottom: 30px;
     margin-top: 10px;
+    width: 500px;
   }
 </style>

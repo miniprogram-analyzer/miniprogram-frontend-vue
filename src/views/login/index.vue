@@ -79,21 +79,25 @@
 <script>
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
+import Vue from 'vue'
+import API from '@/api/api.js'
+
+Vue.prototype.API = API
 
 export default {
   name: 'Login',
   components: { SocialSign },
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+      if (value==" " ||value==null) {
+        callback(new Error('用户名不能为空'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+      if (value.length < 7||value.length>21) {
+        callback(new Error('请输入8~20位的账户密码'))
       } else {
         callback()
       }
@@ -156,6 +160,7 @@ export default {
       })
     },
     handleLogin() {
+      /*
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
@@ -172,6 +177,12 @@ export default {
           return false
         }
       })
+      */
+     API.login({}).then(res=>{
+       console.log(res)
+     }).catch(_=>{
+       console.log('失败')
+     })
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {

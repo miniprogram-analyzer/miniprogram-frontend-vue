@@ -130,6 +130,19 @@ export const constantRoutes = [
       }
     ]
   },
+
+  {
+    path: '/ask',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/ask/index'),
+        name: 'ask',
+        meta: { title: 'ask', icon: 'form', noCache: true }
+      }
+    ]
+  },
 ]
 
 /**
@@ -435,6 +448,8 @@ export const asyncRoutes = [
       }
     ]
   },
+
+  
 
   /*{
     path: 'external-link',
