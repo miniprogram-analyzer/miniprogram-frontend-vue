@@ -2,11 +2,15 @@
 export default {
 // 登录接口
   login: {
-    url: 'http://localhost:7001/api/login',
-    method: 'post'
+    url: 'http://122.51.210.8:7000/api/login',
+    method: 'post',
     },
-  getdebugslist: {
-    url: 'http://localhost:7001/api/getlist',
+  register: {
+    url: 'http://122.51.210.8:7000/api/register',
+    method: 'post',
+    },
+  getList: {
+    url: 'http://122.51.210.8:7000/api/getList',
     method: 'post'
     }
   }

@@ -1,6 +1,5 @@
 <template>
   <div class="dashboard-editor-container">
-
     <el-row :gutter="32">
       <img src="./components/title.png" width="1100" height="400" class="image">
     </el-row>
@@ -30,7 +29,7 @@
       @change="handleChange"
     />
     <router-link :to="{path:'search'}" class="size">没有搜到?去bug库里面看看吧</router-link>
-    <el-backtop target=".page-component__scroll .el-scrollbar__wrap" />
+    
     <h4 v-if="seen" style="margin:16px">看看你的问题是不是这些，其他同学也遇到了哟</h4>
     <el-table
       :data="tableData"

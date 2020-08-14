@@ -13,6 +13,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
+          id="username"
           placeholder="Username"
           name="username"
           type="text"
@@ -33,6 +34,7 @@
             :type="passwordType"
             placeholder="Password"
             name="password"
+            id="password"
             tabindex="2"
             autocomplete="on"
             @keyup.native="checkCapslock"
@@ -104,8 +106,8 @@ export default {
     }
     return {
       loginForm: {
-        username: '',
-        password: ''
+        username: 'admin',
+        password: '111111111'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -160,7 +162,7 @@ export default {
       })
     },
     handleLogin() {
-      /*
+      
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
@@ -177,12 +179,25 @@ export default {
           return false
         }
       })
-      */
-     API.login({}).then(res=>{
+      /*
+     var username = document.getElementById('username').value
+     var password = document.getElementById('password').value
+     console.log(username)
+     console.log(password)
+     
+     API.login({username,password}).then(res=>{
        console.log(res)
      }).catch(_=>{
-       console.log('失败')
-     })
+       console.log(_)
+       console.log(_.successFlag)
+       if(_.successFlag == 'Y'){
+         this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+       }
+       else{
+         console.log('登录失败')
+         alert("用户名或密码错误")
+       }
+     })*/
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {

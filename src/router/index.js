@@ -52,21 +52,26 @@ export const constantRoutes = [
   },
   {
     path: '/login',
-    component: Layout,
-    redirect: '/login/index',
-    children:[
-      {
-        path:'index',
-        component: () => import('@/views/login/index'),
-        name:'Login',
-        meta:{title:'登录',icon: 'icon'}
-      }
-    ]
+    component: () => import('@/views/login/index'),
+    hidden: true
   },
   {
     path: '/auth-redirect',
     component: () => import('@/views/login/auth-redirect'),
     hidden: true
+  },
+  {
+    path: '/denglu',
+    component: Layout,
+    redirect: '/denglu/index',
+    children:[
+      {
+        path:'index',
+        component: () => import('@/views/denglu/index'),
+        name:'Denglu',
+        meta:{title:'登录',icon: 'icon'}
+      }
+    ]
   },
   {
     path: '/register',
