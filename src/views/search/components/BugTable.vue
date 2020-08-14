@@ -1,14 +1,17 @@
 <template>
-  <el-table :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))" height="400" style="width: 100%" highlight-current-row @current-change="handleCurrentChange">
+  <el-table :data="tableData.filter(data => !search || data.detail.toLowerCase().includes(search.toLowerCase()))" height="400" style="width: 100%" highlight-current-row @current-change="handleCurrentChange">
     <el-table-column type="expand">
       <template slot-scope="props">
         <el-form label-position="left" inline class="demo-table-expand">
-          <el-form-item label="问题">
-            <span>{{ props.row.name }}</span>
-          </el-form-item>
-          <el-form-item label="回答">
+          
+          <el-form-item label="原因">
             <span>{{ props.row.reason }}</span>
-          </el-form-item>          
+          </el-form-item>
+          
+          <el-form-item label="解决方法">
+            <span>{{ props.row.solve }}</span>
+          </el-form-item>
+                  
         </el-form>
       </template>
     </el-table-column>
@@ -18,8 +21,9 @@
     </el-table-column>
     <el-table-column
       label="问题"
-      prop="name">
+      prop="detail">
     </el-table-column>
+    
     <el-table-column
       prop="tag"
       label="标签"
@@ -32,6 +36,7 @@
           disable-transitions>{{scope.row.tag}}</el-tag>
       </template>
     </el-table-column>
+    
     <el-table-column prop="warehouseName" label="库房" :show-overflow-tooltip="true" header-align="left" align="left" width="250"> 
         <template slot-scope="scope">
             {{scope.row.warehouseName}}
@@ -48,13 +53,24 @@
         </template>
     </el-table-column>
   </el-table>
-  
 </template>
 
 <script>
+import Vue from 'vue'
+import API from '@/api/api.js'
+
+Vue.prototype.API = API
+
   export default {
     data() {
       return {
+        tableData:[{
+          detail: '',
+          reason: '',
+          solve: '',
+          tag: ''
+        }],
+        /*
         tableData: [{
           
           name: '报错类型：page is not defined',
@@ -93,7 +109,7 @@
         },{
           
           name: ' js里注释是不能用<!--**-->但能用//吗',
-          reason: '<!--  -->用于 HTML；css 用 /**/；js /**/    //都可以；json文件没有注释！如果试图在json文件中添加注释，会直接标红线！',
+          reason: '<!--  -->用于 HTML；css 用 ；js     //都可以；json文件没有注释！如果试图在json文件中添加注释，会直接标红线！',
           tag: 'js'
         },{
           
@@ -355,10 +371,22 @@
           name: ' 怎么改变背景色啊？',
           reason: '在app.json中的window中可以进行修改导航栏的背景颜色，可以在app.wxss文件中利用background-color来设定整个小程序页面的颜色',
           tag: 'json'
-        }],
+        }],*/
         search:''
       }
     },
+    created(){
+      API.getList({}).then(res=>{
+       console.log(res)
+       console.log(res.msg.length)
+       var n = res.msg.length
+       this.tableData = res.msg
+       console.log(this.tableData)
+     }).catch(_=>{
+       console.log(_)
+     })
+    },
+    
     computed: {
         // 模糊搜索
         tables () {
