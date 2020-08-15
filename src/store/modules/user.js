@@ -35,6 +35,8 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
+        console.log(response)
+        //能不能进入首页
         commit('SET_TOKEN', data.token)
         setToken(data.token)
         resolve()
@@ -49,13 +51,14 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
-
+        console.log(response)
         if (!data) {
           reject('Verification failed, please Login again.')
         }
 
         const { roles, name, avatar, introduction } = data
 
+        
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
           reject('getInfo: roles must be a non-null array!')

@@ -44,7 +44,15 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-
+    /*
+    console.log(res.successFlag)
+    if(res.successFlag == 'N')
+    {
+      MessageBox.confirm('用户名或密码错误')
+    }else {
+      return res
+    }*/
+    
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== 20000) {
       Message({

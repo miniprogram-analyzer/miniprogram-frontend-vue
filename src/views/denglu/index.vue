@@ -162,9 +162,10 @@ export default {
       })
     },
     handleLogin() {
-     /* 
+     /*
       this.$refs.loginForm.validate(valid => {
         if (valid) {
+          console.log('1')
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm)
             .then(() => {
@@ -179,7 +180,7 @@ export default {
           return false
         }
       })*/
-      
+     
      var username = document.getElementById('username').value
      var password = document.getElementById('password').value
      console.log(username)

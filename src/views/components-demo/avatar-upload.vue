@@ -1,32 +1,24 @@
 <template>
   <div class="components-container">
-    <el-tabs type="border-card" >
+    <el-tabs type="card" tab-position="left">
       <el-tab-pane>
-        <span slot="label"> 我的信息</span>
-        <!--
-        <pan-thumb :image="image" />
-
-        <el-button type="primary" icon="el-icon-upload" style="position: absolute;bottom: 30px;margin-left: 100px;" @click="imagecropperShow=true">
-          Change Avatar
-        </el-button>
-
-        <image-cropper
-          v-show="imagecropperShow"
-          :key="imagecropperKey"
-          :width="300"
-          :height="300"
-          url="https://httpbin.org/post"
-          lang-type="en"
-          @close="close"
-          @crop-upload-success="cropSuccess"
-        />
-        -->
-        <information />
+        <span slot="label"> 个人资料</span>
+        <information />       
       </el-tab-pane>
+
       <el-tab-pane>
-        <span slot="label">我的消息</span>
+        <span slot="label">消息提醒</span>
+        <message />
       </el-tab-pane>
-    
+
+      <el-tab-pane>
+        <span slot="label">我的收藏</span>
+      </el-tab-pane>
+      
+      <el-tab-pane>
+        <span slot="label">我的问答</span>
+        <question />
+      </el-tab-pane>
     
     </el-tabs>
   </div>
@@ -36,10 +28,12 @@
 import ImageCropper from '@/components/ImageCropper'
 import PanThumb from '@/components/PanThumb'
 import information from './components/information'
+import message from './components/message'
+import question from './components/question'
 
 export default {
   name: 'AvatarUploadDemo',
-  components: { ImageCropper, PanThumb, information},
+  components: { ImageCropper, PanThumb, information,message,question},
   data() {
     return {
       imagecropperShow: false,
@@ -66,8 +60,8 @@ export default {
 
 <style scoped>
   .avatar{
-    width: 200px;
-    height: 200px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
   }
   .inputclass{
@@ -75,4 +69,5 @@ export default {
     margin-top: 10px;
     width: 500px;
   }
+  
 </style>

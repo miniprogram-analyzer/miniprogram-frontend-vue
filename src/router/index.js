@@ -60,6 +60,8 @@ export const constantRoutes = [
     component: () => import('@/views/login/auth-redirect'),
     hidden: true
   },
+  
+  
   {
     path: '/denglu',
     component: Layout,

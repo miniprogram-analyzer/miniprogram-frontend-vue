@@ -1,5 +1,7 @@
 <template>
+
     <div class="components-container">
+      <!--
         <pan-thumb :image="image" />
 
         <el-button type="primary" icon="el-icon-upload" style="position: absolute;bottom: 30px;margin-left: 100px;" @click="imagecropperShow=true">
@@ -16,13 +18,68 @@
           @close="close"
           @crop-upload-success="cropSuccess"
         />
+        -->
+        <div class="header">
+          <h1>个人资料</h1>
+          <el-divider></el-divider>
+        </div>
+        <div class="nav">
+          <pan-thumb :image="image" />
 
-        <el-form>
-            <el-form-item>
-                <el-input></el-input>
+         <el-button type="primary" icon="el-icon-upload" style="position: absolute;bottom: 600px;margin-left: 100px;" @click="imagecropperShow=true">
+           Change Avatar
+         </el-button>
+
+         <image-cropper
+           v-show="imagecropperShow"
+           :key="imagecropperKey"
+           :width="300"
+           :height="300"
+           url="https://httpbin.org/post"
+           lang-type="en"
+           @close="close"
+           @crop-upload-success="cropSuccess"
+         />
+        </div>
+        <div>
+          <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+            <el-form-item label="电子邮箱" prop="email">
+              <el-input v-model="ruleForm.email" autocomplete="off"></el-input>
             </el-form-item>
-        </el-form>
+            <el-form-item label="学校" prop="school">
+              <el-input v-model="ruleForm.school" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="学号" prop="number">
+              <el-input v-model="ruleForm.number" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="个性简介" prop="introduction">
+              <el-input type="textarea" v-model="ruleForm.introduction" autocomplete="off"></el-input>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div class="header">
+          <h1>修改密码</h1>
+          <el-divider></el-divider>
+        </div>
+        <div>
+          <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+            <el-form-item label="原密码">
+              <el-input type="password" v-model="ruleForm.originpass"></el-input>
+            </el-form-item>
+            <el-form-item label="新密码" prop="pass">
+              <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="确认新密码" prop="checkPass">
+              <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+              <el-button @click="resetForm('ruleForm')">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
     </div>
+    
 </template>
 
 <script>
@@ -33,10 +90,46 @@ export default {
   name: 'AvatarUploadDemo',
   components: { ImageCropper, PanThumb },
   data() {
+    var validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'));
+      } else {
+        if (this.ruleForm.checkPass !== '') {
+          this.$refs.ruleForm.validateField('checkPass');
+        }
+        callback();
+      }
+    };
+    var validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'));
+      } else if (value !== this.ruleForm.pass) {
+        callback(new Error('两次输入密码不一致!'));
+      } else {
+        callback();
+      }
+    };
     return {
       imagecropperShow: false,
       imagecropperKey: 0,
       image: 'https://wpimg.wallstcn.com/577965b9-bb9e-4e02-9f0c-095b41417191',
+      ruleForm: {
+        pass: '',
+        checkPass: '',
+        originpass: '',
+        email: '',
+        school: '',
+        number: '',
+        introduction: ''
+      },
+      rules: {
+        pass: [
+          { validator: validatePass, trigger: 'blur' }
+        ],
+        checkPass: [
+          { validator: validatePass2, trigger: 'blur' }
+        ],
+      }
     }
   },
   methods: {
@@ -47,6 +140,19 @@ export default {
     },
     close() {
       this.imagecropperShow = false
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          alert('submit!');
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
     }
   },
 }
@@ -63,4 +169,5 @@ export default {
     margin-top: 10px;
     width: 500px;
   }
+  
 </style>
