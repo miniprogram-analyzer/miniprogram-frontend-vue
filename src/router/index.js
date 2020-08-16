@@ -75,6 +75,7 @@ export const constantRoutes = [
       }
     ]
   },*/
+  
   {
     path: '/register',
     component: Layout,
@@ -88,6 +89,7 @@ export const constantRoutes = [
       }
     ]
   },
+  
   /*{
     path: '/404',
     component: () => import('@/views/error-page/404'),
@@ -138,6 +140,7 @@ export const constantRoutes = [
     ]
   },
 
+  /*
   {
     path: '/ask',
     component: Layout,
@@ -149,7 +152,7 @@ export const constantRoutes = [
         meta: { title: 'ask', icon: 'form', noCache: true }
       }
     ]
-  },
+  },*/
 ]
 
 /**
@@ -400,6 +403,18 @@ export const asyncRoutes = [
       
     ]
   },
+  {
+    path: '/ask',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/ask/index'),
+        name: 'ask',
+        meta: { title: 'ask', icon: 'form', noCache: true, roles: ['admin']}
+      }
+    ]
+  },
 
   {
     path: '/clipboard',
@@ -415,7 +430,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/clipboard/index'),
         name: 'ClipboardDemo',
-        meta: { title: '问题编辑页'}
+        meta: { title: '问题编辑页', roles: ['admin']}
       }
     ]
   },
@@ -451,7 +466,7 @@ export const asyncRoutes = [
         path: 'index',
         component: ()=>import('@/views/chacuo/index'),
         name: 'chacuo',
-        meta:{title: '代码上传页'}
+        meta:{title: '代码上传页', roles: ['admin']}
       }
     ]
   },

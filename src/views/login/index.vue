@@ -48,6 +48,7 @@
       </el-tooltip>
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handlewonder">随便逛逛</el-button>
 
       <!--
       <div style="position:relative">
@@ -106,8 +107,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111111'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -179,25 +180,16 @@ export default {
           return false
         }
       })
-      /*
-     var username = document.getElementById('username').value
-     var password = document.getElementById('password').value
-     console.log(username)
-     console.log(password)
-     
-     API.login({username,password}).then(res=>{
-       console.log(res)
-     }).catch(_=>{
-       console.log(_)
-       console.log(_.successFlag)
-       if(_.successFlag == 'Y'){
-         this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-       }
-       else{
-         console.log('登录失败')
-         alert("用户名或密码错误")
-       }
-     })*/
+    },
+    handlewonder() {
+      this.$store.dispatch('user/wander')
+        .then(() => {
+          this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {

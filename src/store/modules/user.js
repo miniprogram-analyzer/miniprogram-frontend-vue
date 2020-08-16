@@ -49,6 +49,12 @@ const actions = {
     })
   },
 
+  wander({commit}) {
+    const data = 'N'
+    commit('SET_TOKEN', data)
+    setToken(data)
+  },
+
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
