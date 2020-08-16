@@ -162,7 +162,7 @@ export default {
       })
     },
     handleLogin() {
-     /*
+     
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           console.log('1')
@@ -179,8 +179,8 @@ export default {
           console.log('error submit!!')
           return false
         }
-      })*/
-     
+      })
+     /*
      var username = document.getElementById('username').value
      var password = document.getElementById('password').value
      console.log(username)
@@ -199,6 +199,7 @@ export default {
          alert("用户名或密码错误")
        }
      })
+     */
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {

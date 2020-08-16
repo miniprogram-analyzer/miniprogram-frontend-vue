@@ -61,7 +61,7 @@ export const constantRoutes = [
     hidden: true
   },
   
-  
+  /*
   {
     path: '/denglu',
     component: Layout,
@@ -74,7 +74,7 @@ export const constantRoutes = [
         meta:{title:'登录',icon: 'icon'}
       }
     ]
-  },
+  },*/
   {
     path: '/register',
     component: Layout,

@@ -13,6 +13,7 @@ const state = {
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
+    console.log(state.token)
   },
   SET_INTRODUCTION: (state, introduction) => {
     state.introduction = introduction
@@ -32,13 +33,15 @@ const actions = {
   // user login
   login({ commit }, userInfo) {
     const { username, password } = userInfo
+    console.log(userInfo)
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
+        //const { data } = response
         console.log(response)
+        const data = response.successFlag
         //能不能进入首页
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        commit('SET_TOKEN', data)
+        setToken(data)
         resolve()
       }).catch(error => {
         reject(error)
@@ -51,12 +54,14 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
-        console.log(response)
+        console.log(state.token)
+        console.log(data)
         if (!data) {
           reject('Verification failed, please Login again.')
         }
 
         const { roles, name, avatar, introduction } = data
+        console.log(roles)
 
         
         // roles must be a non-empty array
