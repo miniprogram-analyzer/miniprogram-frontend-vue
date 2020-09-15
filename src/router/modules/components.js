@@ -40,7 +40,7 @@ const componentsRouter = {
       path: 'avatar-upload',
       component: () => import('@/views/components-demo/avatar-upload'),
       name: 'AvatarUploadDemo',
-      meta: { title: '个人页' }
+      meta: { title: '个人页', roles: ['admin']}
     },
     /*{
       path: 'dropzone',

@@ -48,7 +48,8 @@ service.interceptors.response.use(
     console.log('1')
     if(res.successFlag == 'N')
     {
-      MessageBox.confirm('用户名或密码错误')
+      MessageBox.confirm('学号错误')
+      //this.$message('学号错误')
     }else {
       return res
     }

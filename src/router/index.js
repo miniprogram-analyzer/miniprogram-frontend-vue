@@ -75,7 +75,7 @@ export const constantRoutes = [
       }
     ]
   },*/
-  
+  /*
   {
     path: '/register',
     component: Layout,
@@ -88,7 +88,7 @@ export const constantRoutes = [
         meta:{title:'注册',icon: 'theme'}
       }
     ]
-  },
+  },*/
   
   /*{
     path: '/404',
@@ -398,7 +398,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/documentation/index'),
         name: 'Documentation',
-        meta: { title: '文档', icon: 'documentation'}
+        meta: { title: '文档', icon: 'documentation',roles: ['admin','editor']}
       },
       
     ]
@@ -448,7 +448,7 @@ export const asyncRoutes = [
         path: 'index',
         component: ()=>import('@/views/search/index'),
         name: 'search',
-        meta: { title: 'bug库' }
+        meta: { title: 'bug库', roles: ['admin','editor']}
       }
     ]
   },
@@ -470,6 +470,41 @@ export const asyncRoutes = [
       }
     ]
   },
+  
+  {
+    path: '/geren',
+    component: Layout,
+    redirect: '/geren/index',
+    name: 'geren',
+    meta:{
+      title: '个人页',
+      icon: 'theme'
+    },
+    children:[{
+      path: 'index',
+      component: ()=>import('@/views/geren/index'),
+      name: 'geren',
+      meta: {title: '个人页'}
+    }]
+  },
+  {
+    path: '/ceshi',
+    component: Layout,
+    redirect: '/ceshi/index',
+    name: 'ceshi',
+    meta:{
+      title: '测试',
+      icon: 'theme'
+    },
+    children:[{
+      path: 'index',
+      component: ()=>import('@/views/ceshi/index'),
+      name: 'ceshi',
+      meta: {title: '测试'}
+    }]
+  },
+  
+  
 
   
 

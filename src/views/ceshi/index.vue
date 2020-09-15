@@ -45,11 +45,14 @@
         -->
         <div>
           <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+            <el-form-item label="用户名" prop="username">
+              <el-input v-model="ruleForm.username" autocomplete="off"></el-input>
+            </el-form-item>
             <el-form-item label="电子邮箱" prop="email">
               <el-input v-model="ruleForm.email" autocomplete="off"></el-input>
             </el-form-item>
-            <el-form-item label="学校" prop="school">
-              <el-input v-model="ruleForm.school" autocomplete="off"></el-input>
+            <el-form-item label="电话" prop="phone">
+              <el-input v-model="ruleForm.phone" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="学号" prop="number">
               <el-input v-model="ruleForm.number" autocomplete="off"></el-input>
@@ -124,9 +127,10 @@ export default {
         checkPass: '',
         originpass: '',
         email: '',
-        school: '',
+        phone: '',
         number: '',
-        introduction: ''
+        introduction: '',
+        username: ''
       },
       rules: {
         pass: [
@@ -139,12 +143,34 @@ export default {
     }
   },
   created(){
-    console.log(this.$route.params.userid)
-      API.getUserinfo({}).then(res=>{
+    //console.log(this.$route.params.userid)
+    //var username = this.$route.params.userid
+    console.log(window.localStorage)
+    if(window.localStorage){
+      var storage = window.localStorage
+      //storage.setItem("username",this.ruleForm.username)
+      var username = storage.getItem("username")
+      console.log(username)
+      API.getUserinfo({username}).then(res=>{
        console.log(res)
      }).catch(_=>{
        console.log(_)
+       this.ruleForm.number = _.msg.id
+       this.ruleForm.username = username
+       this.ruleForm.email = _.msg.email
+       this.ruleForm.phone =_.msg.phone
      })
+    }
+    /*
+      API.getUserinfo({username}).then(res=>{
+       console.log(res)
+     }).catch(_=>{
+       console.log(_)
+       this.ruleForm.number = _.msg.id
+       this.ruleForm.username = username
+       this.ruleForm.email = _.msg.email
+       this.ruleForm.phone =_.msg.phone
+     })*/
     },
   methods: {
     cropSuccess(resData) {

@@ -48,7 +48,7 @@
       </el-tooltip>
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handlewonder">随便逛逛</el-button>
+      
       <el-button :loading="loading" type="text" style="width:100%;margin-bottom:30px;" @click.native.prevent="handlezhuce">还没注册？先去注册</el-button>
       
       <!--
@@ -82,7 +82,6 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-import SocialSign from './components/SocialSignin'
 import Vue from 'vue'
 import API from '@/api/api.js'
 
@@ -90,7 +89,6 @@ Vue.prototype.API = API
 
 export default {
   name: 'Login',
-  components: { SocialSign },
   data() {
     const validateUsername = (rule, value, callback) => {
       if (value==" " ||value==null) {
@@ -134,16 +132,6 @@ export default {
       },
       immediate: true
     }
-  },
-  beforeCreate(){
-    this.$store.dispatch('user/wander')
-        .then(() => {
-          this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-          this.loading = false
-        })
-        .catch(() => {
-          this.loading = false
-        })
   },
   created() {
     // window.addEventListener('storage', this.afterQRScan)
@@ -191,16 +179,6 @@ export default {
           return false
         }
       })
-    },
-    handlewonder() {
-      this.$store.dispatch('user/wander')
-        .then(() => {
-          this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-          this.loading = false
-        })
-        .catch(() => {
-          this.loading = false
-        })
     },
     handlezhuce() {
       this.$store.dispatch('user/zhuce')

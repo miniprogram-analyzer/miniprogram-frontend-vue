@@ -1,6 +1,7 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo, register } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
+
 
 const state = {
   token: getToken(),
@@ -35,7 +36,7 @@ const actions = {
     const { username, password } = userInfo
     console.log(userInfo)
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
+      login({ nameOrid: username.trim(), password: password }).then(response => {
         //const { data } = response
         console.log(response)
         const data = response.successFlag
@@ -49,8 +50,42 @@ const actions = {
     })
   },
 
+  register({commit},userInfo) {
+    const id = userInfo.number
+    const password = userInfo.password
+    const username = userInfo.username
+    console.log(id)
+    return new Promise((resolve, reject) => {
+      register({id:id,username: username.trim(), password: password}).then(response => {
+        console.log(response)
+        const data = response.successFlag
+        //能不能进入首页
+        commit('SET_TOKEN', data)
+        setToken(data)
+        resolve()
+
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
   wander({commit}) {
-    const data = 'N'
+    const data = 'Y'
+    commit('SET_TOKEN', data)
+    setToken(data)
+  },
+
+  zhuce({commit}) {
+    const data = 'visitor'
+    console.log(data)
+    commit('SET_TOKEN', data)
+    setToken(data)
+  },
+
+  relogin({commit}) {
+    const data = 'denglu'
+    console.log(data)
     commit('SET_TOKEN', data)
     setToken(data)
   },

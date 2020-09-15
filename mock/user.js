@@ -5,6 +5,12 @@ const tokens = {
   },
   editor: {
     token: 'editor-token'
+  },
+  visitor: {
+    token: 'visitor-token'
+  },
+  denglu: {
+    token: 'denglu-token'
   }
 }
 
@@ -20,6 +26,18 @@ const users = {
     introduction: 'I am an editor',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
     name: 'Normal Editor'
+  },
+  'visitor': {
+    roles: ['visitor'],
+    introduction: 'I am a visitor',
+    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    name: 'normal visitor'
+  },
+  'denglu': {
+    roles: ['denglu'],
+    introduction: 'i want to denglu',
+    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+    name: 'denglu'
   }
 }
 

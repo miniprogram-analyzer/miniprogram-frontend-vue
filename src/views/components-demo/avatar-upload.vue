@@ -45,6 +45,9 @@ export default {
       input4: ''
     }
   },
+  created(){
+    console.log(this.$route.params.userid)
+  },
   methods: {
     cropSuccess(resData) {
       this.imagecropperShow = false

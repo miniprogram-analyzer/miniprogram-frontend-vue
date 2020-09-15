@@ -1,8 +1,17 @@
 import request from '@/utils/request'
+import regist from '@/utils/regist'
 
 export function login(data) {
   return request({
     url: 'http://122.51.210.8:7000/api/login ',
+    method: 'post',
+    data
+  })
+}
+
+export function register(data) {
+  return regist ({
+    url: 'http://122.51.210.8:7000/api/register',
     method: 'post',
     data
   })

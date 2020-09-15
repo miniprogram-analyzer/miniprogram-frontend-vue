@@ -3,6 +3,8 @@ import apiConfig from './api_config'
 
 import axios from 'axios'
 
+axios.defaults.withCredentials = true
+
 const obj = {}
 
 for (const i in apiConfig) {

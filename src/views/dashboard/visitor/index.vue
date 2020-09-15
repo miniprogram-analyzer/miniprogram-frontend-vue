@@ -6,15 +6,31 @@
         <h3 class="title">Login Form</h3>
       </div>
 
+      <el-form-item prop="number">
+        <span class="svg-container">
+          <svg-icon icon-class="guide" />
+        </span>
+        <el-input
+          id="number"
+          ref="number"
+          v-model="loginForm.number"
+          placeholder="输入学号"
+          name="number"
+          type="text"
+          tabindex="4"
+          autocomplete="on"
+        />
+      </el-form-item>
+
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
+          id="username"
           ref="username"
           v-model="loginForm.username"
-          id="username"
-          placeholder="Username"
+          placeholder="输入用户名"
           name="username"
           type="text"
           tabindex="1"
@@ -28,18 +44,18 @@
             <svg-icon icon-class="password" />
           </span>
           <el-input
+            id="password"
             :key="passwordType"
             ref="password"
             v-model="loginForm.password"
             :type="passwordType"
-            placeholder="Password"
+            placeholder="输入密码"
             name="password"
-            id="password"
             tabindex="2"
             autocomplete="on"
             @keyup.native="checkCapslock"
             @blur="capsTooltip = false"
-            @keyup.enter.native="handleLogin"
+            @keyup.enter.native="handleLogin('loginForm')"
           />
           <span class="show-pwd" @click="showPwd">
             <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
@@ -47,59 +63,79 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
+        <el-form-item prop="password2">
+          <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+          <el-input
+            id="password2"
+            :key="password2Type"
+            ref="password2"
+            v-model="loginForm.password2"
+            :type="password2Type"
+            placeholder="确认密码"
+            name="password2"
+            tabindex="3"
+            autocomplete="on"
+            @keyup.native="checkCapslock"
+            @blur="capsTooltip = false"
+            @keyup.enter.native="handleLogin('loginForm')"
+          />
+          <span class="show-pwd" @click="showPwd2">
+            <svg-icon :icon-class="password2Type === 'password' ? 'eye' : 'eye-open'" />
+          </span>
+        </el-form-item>
+      </el-tooltip>
 
-      <!--
-      <div style="position:relative">
-        <div class="tips">
-          <span>Username : admin</span>
-          <span>Password : any</span>
-        </div>
-        <div class="tips">
-          <span style="margin-right:18px;">Username : editor</span>
-          <span>Password : any</span>
-        </div>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin('loginForm')">注册</el-button>
 
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          Or connect with
-        </el-button>
-      </div>
-      -->
     </el-form>
 
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      Can not be simulated on local, so please combine you own business simulation! ! !
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog>
-    <li class="introduction"><router-link to="/register">还未注册？先去注册</router-link></li>
   </div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
-//import SocialSign from './components/SocialSignin'
+import { validUsername, validNumber } from '@/utils/validate'
 import Vue from 'vue'
 import API from '@/api/api.js'
 
 Vue.prototype.API = API
 
 export default {
-  name: 'Login',
- // components: { SocialSign },
+  name: 'Register',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (value==" " ||value==null) {
+      console.log(value)
+      if (value === '' || value === null) {
         callback(new Error('用户名不能为空'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 7||value.length>21) {
-        callback(new Error('请输入8~20位的账户密码'))
+      if (value.length < 8 || value.length > 20) {
+        callback(new Error('请输入8~20位的用户密码'))
+      } else if (this.loginForm.username === this.loginForm.password) {
+        callback(new Error('密码不能与用户名一致哟'))
+      } else {
+        callback()
+      }
+    }
+    const validatePassword2 = (rule, value, callback) => {
+      var password = document.getElementById('password').value
+      if (value !== password) {
+        callback(new Error('两次输入的密码不一致'))
+      } else {
+        callback()
+      }
+    }
+    const validateNumber = (rule, value, callback) => {
+      console.log(value.length)
+      if ((value.length !== 0) && (value.length !== 10 || !validNumber(value))) {
+        callback(new Error('学号错误'))
+      } else if (value.length === 0) {
+        callback(new Error('学号不能为空'))
       } else {
         callback()
       }
@@ -107,13 +143,18 @@ export default {
     return {
       loginForm: {
         username: '',
-        password: ''
+        password: '',
+        password2: '',
+        number: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        password2: [{ required: true, trigger: 'blur', validator: validatePassword2 }],
+        number: [{ required: true, trigger: 'blur', validator: validateNumber }]
       },
       passwordType: 'password',
+      password2Type: 'password',
       capsTooltip: false,
       loading: false,
       showDialog: false,
@@ -161,45 +202,39 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin() {
-     
-      this.$refs.loginForm.validate(valid => {
+    showPwd2() {
+      if (this.password2Type === 'password') {
+        this.password2Type = ''
+      } else {
+        this.password2Type = 'password'
+      }
+      this.$nextTick(() => {
+        this.$refs.password.focus()
+      })
+    },
+    handleLogin(formName) {
+      this.$refs[formName].validate(valid => {
         if (valid) {
-          console.log('1')
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
+          var id = document.getElementById('number').value
+          var username = document.getElementById('username').value
+          var password = document.getElementById('password').value
+          API.register({ id, username, password }).then(res => {
+            console.log(res)
+            // 这是一个实现页面跳转的例子，以实际情况为准
+            if (res.successflag === 'Y') {
+              this.$router.push('/login')
+            } else {
+              console.log('登录失败！')
+            }
+          }).catch(_ => {
+            console.log(_)
+          })
         } else {
           console.log('error submit!!')
           return false
         }
       })
-     /*
-     var username = document.getElementById('username').value
-     var password = document.getElementById('password').value
-     console.log(username)
-     console.log(password)
-     
-     API.login({username,password}).then(res=>{
-       console.log(res)
-     }).catch(_=>{
-       console.log(_)
-       console.log(_.successFlag)
-       if(_.successFlag == 'Y'){
-         this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-       }
-       else{
-         console.log('登录失败')
-         alert("用户名或密码错误")
-       }
-     })
-     */
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {
@@ -275,8 +310,6 @@ $cursor: #fff;
     border-radius: 5px;
     color: #454545;
   }
-
-  height: 600px;
 }
 </style>
 
@@ -351,7 +384,7 @@ $light_gray:#eee;
   .introduction{
   font-size: 15px;
   color:azure;
-  margin-left: 800px;
+  margin-left: 1000px;
  }
   @media only screen and (max-width: 470px) {
     .thirdparty-button {

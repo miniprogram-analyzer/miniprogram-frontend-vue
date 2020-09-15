@@ -1,54 +1,58 @@
 <template>
   <div class="dashboard-editor-container">
     <el-row :gutter="32">
-      <img src="./components/title.png" width="1100" height="400" class="image">
+      <img src="./components/title.png" width="357.5" height="130" class="image">
     </el-row>
 
     <el-row :gutter="8">
-     <!--
+      <!--
       <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}" style="padding-left:8px;margin-bottom:30px;">
         <box-card />
       </el-col>
       -->
-     <h1 class="introduction">为代码初学者提供了一个可以获取所需代码，进行自主学习，自主发现错误，认识错误的平台，通过对所上传代码中常见错误进行识别，并在线反馈错误原因</h1>
-     
-     <li class="introduction"><router-link to="/chacuo">上传代码进行纠错</router-link></li>
-     <li class="introduction"><router-link to="/search">问题搜索</router-link></li>
-     <li class="introduction"><router-link to="/documentation">学习相关文档</router-link></li>
-     
+      <h2 class="introduction">为代码初学者提供了一个可以获取所需代码，进行自主学习，自主发现错误，认识错误的平台，通过对所上传代码中常见错误进行识别，并在线反馈错误原因</h2>
+
+      <li class="introduction"><el-link style="font-size=14px" type="primary" to="/chacuo">上传代码进行纠错</el-link></li>
+      <li class="introduction"><el-link style="font-size=14px" type="primary" to="/search">问题搜索</el-link></li>
+      <li class="introduction"><el-link style="font-size=14px" type="success" to="/documentation">学习相关文档</el-link></li>
+
     </el-row>
+    <!-- 提问框 -->
     <el-autocomplete
       v-model="state"
       :fetch-suggestions="querySearchAsync"
-      placeholder="输入遇到的问题吧"
+      placeholder="遇到了什么问题？"
       :hide-loading="true"
       :autofocus="true"
       :trigger-on-focus="false"
-      style="width: 700px;margin: 16px;border-radius: 20pt;overflew: hidden"
+      clearable
+      style="width: 49vw;margin: 16px;border-radius: 30px;overflew: hidden"
       @select="handleSelect"
       @change="handleChange"
+      @keyup.enter.native="search"
     />
-    <router-link :to="{path:'search'}" class="size">没有搜到?去bug库里面看看吧</router-link>
-    
+    <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="search">搜一搜</el-button>
+    <!--  -->
+
+    <!-- 搜索推荐 -->
     <h4 v-if="seen" style="margin:16px">看看你的问题是不是这些，其他同学也遇到了哟</h4>
     <el-table
       :data="tableData"
-      style="width: 100%"
+      style="width: 50vw"
+      :row-key="getRowKeys"
+      :expand-row-keys="expands"
+      :stripe="true"
+      empty-text="暂时找不到内容哟"
+      @row-click="clickRowHandle"
     >
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="问题描述">
-              <span>{{ props.row.value }}</span>
-            </el-form-item>
-            <el-form-item label="原因">
+            <el-form-item v-if="props.row.reasons !== ''" label="原因">
               <span>{{ props.row.reasons }}</span>
             </el-form-item>
             <el-form-item label="解决方案">
               <span>{{ props.row.solve }}</span>
-            </el-form-item>
-            <el-form-item label="标签">
-              <span>{{ props.row.tag }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -56,240 +60,396 @@
       <el-table-column
         label="问题描述"
         prop="value"
+        style="width:50%"
       />
       <el-table-column
-        label="标签"
         prop="tag"
-      />
+        label="标签"
+        align="left"
+        style="width:20%"
+      >
+        <template slot-scope="scope" class="tag-group">
+          <el-tag
+            v-for="item in scope.row.tag"
+            :key="item"
+            type="primary"
+            size="small"
+            disable-transitions
+            style="margin:4px"
+          > {{ item }} </el-tag>
+        </template>
+      </el-table-column>
+      <!-- 操作  -->
+      <!-- 以下部分最好设定权限 -->
+      <el-table-column label="操作" align="left" width="230" class-name="small-padding fixed-width">
+        <template slot-scope="{row,$index}">
+          <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
+            编辑内容
+          </el-button>
+          <el-button
+            v-if="row.status!='deleted'"
+            :before-remove="beforeRemove"
+            size="mini"
+            type="danger"
+            icon="el-icon-delete"
+            @click="handleDelete(row,$index)"
+          >删除记录</el-button>
+        </template>
+      </el-table-column>
     </el-table>
+    <!--  -->
+
+    <!-- 这部分是一个编辑bug库的内容的表单 -->
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+      <el-form ref="deltaForm" :rules="rules" :model="temp" label-position="left" label-width="85px" style="width: 500px; margin-left:16px;">
+        <el-form-item label="问题简述" prop="value">
+          <el-input v-model="temp.value" />
+        </el-form-item>
+        <el-form-item label="原因" prop="reasons">
+          <el-input v-model="temp.reasons" :autosize="{ minRows: 2, maxRows: 6}" type="textarea" placeholder="Please input" />
+        </el-form-item>
+        <el-form-item label="解决方案" prop="solve">
+          <el-input v-model="temp.solve" :autosize="{ minRows: 2, maxRows: 6}" type="textarea" placeholder="Please input" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+          提交
+        </el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
+      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
+        <el-table-column prop="key" label="Channel" />
+        <el-table-column prop="pv" label="Pv" />
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
+      </span>
+    </el-dialog>
+    <!--  -->
+    <p v-if="unfindResult" style="font-size:14px;margin:16px">找不到解答？
+      上<el-link type="primary" href="http://localhost:9527/#/ask/index">提问区</el-link>问问吧！</P>
+    <p style="font-size:14px;margin:16px">发现错误？想参与编辑？联系我们！</P>
 
   </div>
 </template>
 
-<script>
-
-
-import BoxCard from './components/BoxCard'
-
-const lineChartData = {
-  newVisitis: {
-    expectedData: [100, 120, 161, 134, 105, 160, 165],
-    actualData: [120, 82, 91, 154, 162, 140, 145]
-  },
-  messages: {
-    expectedData: [200, 192, 120, 144, 160, 130, 140],
-    actualData: [180, 160, 151, 106, 145, 150, 130]
-  },
-  purchases: {
-    expectedData: [80, 100, 121, 104, 105, 90, 100],
-    actualData: [120, 90, 100, 138, 142, 130, 130]
-  },
-  shoppings: {
-    expectedData: [130, 140, 141, 142, 145, 150, 160],
-    actualData: [120, 82, 91, 154, 162, 140, 130]
-  }
-}
+<script type="module">
+// import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { fetchPv, createArticle } from '@/api/article'
+import waves from '@/directive/waves' // waves directive
+import Vue from 'vue'
+import API from '@/api/api.js'
+Vue.prototype.API = API
 
 export default {
-  /*name: 'DashboardAdmin',
-  components: {
-    BoxCard,
-  },*/
+  directives: { waves },
   data() {
     return {
-      el:'#app',
-      questions: [],
+      el: '#app',
+      questions: null,
       state: '',
       seen: true,
+      select: false,
       timeout: null,
+      getResults: null,
+      isSearch: false,
+      unfindResult: false,
       tableData: [{
-          value: "改动原来代码后onLoad函数出错",
-          reasons: "1.对函数内部的嵌套函数不清楚。2.onLoad函数没有删全，只删了上半部分，下半部分没有删掉",
-          solve :"1.多去编写代码这个问题会被解决。2.检查一下onLoad函数的完整性。",
-          tag :"onLoad函数" + " js"},
-         { value: '图片无法显示（音频无法播放）（会出现报错：Failed to load local image resource /images/xx.png）',
-          reasons: '1.图片（音频）的名称里面混有中文字符（包含中文逗号等）。2.是在代码中图片（音频）的路径不对' +
-          '3.可能图片的位置被无意间改动了。4.图片命名里可能有空格。',
-          solve: '1.检查一下图片（音频）的名称里面是否有中文字符，如果有，对图片（音频）文件重命名。2.检查一下代码里面所写的程序路径是否正确。' +
-          '3.回想一下之前有没有把图片（音频）移动了位置，如果图片移动过位置的话，在小程序里面也要改相应的路径哟。4.注意这些路径里面的空格，可能会很坑！',
-          tag: '图片' + ' 音频' + ' Failed to load'},
-         { value: "显示上传成功了，但是数据库里面没有需要的东西，且没有报错（或者是数据上传得太慢了）",
-          reasons: "1. wxml文件中与绑定上传相关的代码（如bindinput）拼写有误。2.有可能是data后面没有加数组下标（e.g：data[0]）。" +
-          '（note: 这时会出现提示：Setting data field "xx" to undefined is invalid。因为data是数组名，无法从数组名中读取信息（具体原因将在c++课程中第四章学习））'
-          + "3.数据库中的集合名和代码里面的集合名不一致。",
-          solve :"1.尝试刷新，有时候这里反应很慢 2.试试检查一下wxml文件中有关的地方，这里拼写不对是不会报错的哟。3. 试试给data数组添加下标。" +
-          "4 注意检查代码中的集合名与数据库中的集合名是否一致。",
-          tag :"没有报错" + " js" + "上传" },
-         { value: "在手写体识别时，出现签名串错误，在多次检查，重做后，问题没有解决。并且出现了新的报错：uploadFile：fail time out",
-          reasons: "1.签名串本身有错误，比如说少了一个字母。2.签名串某一处（特别是结尾与开头处）出现空格。",
-          solve :"1.检查一下签名串中是否出现空格，这个点很坑！2.检查一下签名串自身有没有缺少字母！",
-          tag :"签名串错误" + " js" + "uploadFile" },
-         { value: "读取数据库中数据时没有报错，但是就是读取不出来",
-          reasons: "在云函数中读取函数中写的数据库名与js中读取函数中写的数据库名字不一样。",
-          solve :"试试检查一下云函数中的数据库名与js中读取函数的数据库名是否一致。",
-          tag :"读取" + " js" }
-        ],
-      backup: [],
-      lineChartData: lineChartData.newVisitis
+        serial: 63,
+        value: '改动原来代码后onLoad函数出错',
+        reasons: '1.对函数内部的嵌套函数不清楚。2.onLoad函数没有删全，只删了上半部分，下半部分没有删掉',
+        solve: '1.多去编写代码这个问题会被解决。2.检查一下onLoad函数的完整性。',
+        tag: ['onLoad函数', '  js'] },
+      { serial: 8,
+        value: '图片无法显示（音频无法播放）（会出现报错：Failed to load local image resource /images/xx.png）',
+        reasons: '1.图片（音频）的名称里面混有中文字符（包含中文逗号等）。2.是在代码中图片（音频）的路径不对' +
+        '3.可能图片的位置被无意间改动了。4.图片命名里可能有空格。',
+        solve: '1.检查一下图片（音频）的名称里面是否有中文字符，如果有，对图片（音频）文件重命名。2.检查一下代码里面所写的程序路径是否正确。' +
+        '3.回想一下之前有没有把图片（音频）移动了位置，如果图片移动过位置的话，在小程序里面也要改相应的路径哟。4.注意这些路径里面的空格，可能会很坑！',
+        tag: ['图片与音频', ' 相对路径', '  Failed to load'] },
+      { serial: 39,
+        value: '显示上传成功了，但是数据库里面没有需要的东西，且没有报错（或者是数据上传得太慢了）',
+        reasons: '1. wxml文件中与绑定上传相关的代码（如bindinput）拼写有误。2.有可能是data后面没有加数组下标（e.g：data[0]）。' +
+        '（note: 这时会出现提示：Setting data field "xx" to undefined is invalid。因为data是数组名，无法从数组名中读取信息（具体原因将在c++课程中第四章学习））' +
+        '3.数据库中的集合名和代码里面的集合名不一致。',
+        solve: '1.尝试刷新，有时候这里反应很慢 2.试试检查一下wxml文件中有关的地方，这里拼写不对是不会报错的哟。3. 试试给data数组添加下标。' +
+        '4 注意检查代码中的集合名与数据库中的集合名是否一致。',
+        tag: ['没有报错', '  js', '  上传'] },
+      { serial: 20,
+        value: '如何调整按钮大小?(字体的大小)',
+        reasons: '',
+        solve: '利用wxss中的属性size，设置size的值。E.g：size:30px;',
+        tag: ['大小属性', '  wxss'] },
+      { serial: 30,
+        value: '读取数据库中数据时没有报错，但是就是读取不出来',
+        reasons: '在云函数中读取函数中写的数据库名与js中读取函数中写的数据库名字不一样。',
+        solve: '试试检查一下云函数中的数据库名与js中读取函数的数据库名是否一致。',
+        tag: ['读取', ' js'] },
+      { serial: 21,
+        value: '为何点击按钮后没有反应？',
+        reasons: '1.可能是js中与按钮反应相关的变量拼写错误。2.如果该按钮和页面跳转相关的话，有可能在app.json文件中没有对应的页面路径。' +
+        '此外，在app.json文件中路径的名字不小心写错了也会出现类似的情况哟。',
+        solve: ' 1.检查js文件中与wxml文件中变量的拼写是否正确。2.检查一下对应路径有没有在app.json文件中。若没有，试试手动添加对应的路径。' +
+        '其次，检查一下路径名是否正确，这个点很坑!',
+        tag: ['js', ' 没有反应'] }
+      ],
+      expands: [],
+      getRowKeys(row) {
+        return row.serial
+      },
+      temp: {
+        id: undefined,
+        value: '',
+        reasons: '',
+        solve: ''
+      },
+      dialogFormVisible: false,
+      dialogStatus: '',
+      textMap: {
+        update: 'Edit',
+        create: 'Create'
+      },
+      dialogPvVisible: false,
+      pvData: [],
+      rules: {
+        value: [{ required: true, message: 'title is required', trigger: 'blur' }],
+        solve: [{ required: true, message: 'measures is required', trigger: 'blur' }]
+      }
     }
   },
-  mounted() {
-    this.questions = this.loadAll()
+  created() {
+    this.loadAll()
   },
   methods: {
     loadAll() {
-      return [
-        { value: '页面无法正常显示，一片空白，出现报错：page is not defined',
-          'reasons': '1.这往往是index.js里面Page的P没有大写导致的。2.也有可能是app.json文件里面页面路径配置不对。',
-          'solve': '1.检查一下index.js文件中Page里面的P是否大写了。' + '2.检查一下app.json文件里面的路径配置' +
-          '3.如果以上问题都已解决，但还是出现报错，那就说明在app.json文件里其他页面的路径有问题(如果有的话)。代码在有问题的页面卡住了，没有继续往后执行。 ' },
-        { 'value': '给云函数安装依赖时怎么都不能成功',
-          'reasons': '',
-          'solve': ' 直接部署，不用安装，不会造成其他不良后果！如果不可行的话，那么试试检查自己的Node.JS是否安装成功，和自己的npm是否可以识别成功。' +
-          '可以参考：https://blog.csdn.net/qq_36538012/article/details/85348019' },
-        { "value": "改动原来代码后onLoad函数出错",
-          "reasons": "1.对函数内部的嵌套函数不清楚。2.onLoad函数没有删全，只删了上半部分，下半部分没有删掉",
-          "solve" :"1. 多去编写代码这个问题会被解决。2.检查一下onLoad函数的完整性。" },
-        { 'value': '怎么改margin创造的边框的颜色（注：class=’margin’）',
-          'reasons': '',
-          'solve': ' 改颜色的话试试background-color属性' },
-        { 'value': '已经显示正确的结果，但云函数那块（queey函数）还是有报错',
-          'reasons': '1.修改云函数后忘记部署了。2. queey函数本身出现了一些小bug',
-          'solve': ' 1.每次做修改后重新部署，并且刷新一下。2.仔细检查一下queey函数的内容是否正确（包含使用的逗号等）。' },
-        { 'value': '什么时候用双引号什么时候用单引号？',
-          'reasons': '',
-          'solve': ' 都可以！有极少数情况会需要区分哟，感兴趣的话可以看看下面关于字符串部分的讲解: https://www.runoob.com/js/js-datatypes.html' },
-        { 'value': 'js里注释是不能用<!--**-->但能用//吗',
-          'reasons': '',
-          'solve': ' <!--  -->用于 HTML；css 用 /**/；js /**/    //都可以；json文件没有注释！如果试图在json文件中添加注释，会直接标红线！(note:按ctrl+？就可以加注释了)' },
-        { 'value': "js文件中xx定义为' '， 那' '代表了啥吗",
-          'reasons': '',
-          'solve': ' 其代表空字符串' },
-        { 'value': '图片无法显示（音频无法播放）（会出现报错：Failed to load local image resource /images/xx.png）',
-          'reasons': '1.图片（音频）的名称里面混有中文字符（包含中文逗号等），2.是在代码中图片（音频）的路径不对' +
-          '3.可能图片的位置被无意间改动了。4.图片命名里可能有空格。',
-          'solve': ' 1.检查一下图片（音频）的名称里面是否有中文字符，如果有，对图片（音频）文件重命名。2.检查一下代码里面所写的程序路径是否正确。' +
-          '3.回想一下之前有没有把图片（音频）移动了位置，如果图片移动过位置的话，在小程序里面也要改相应的路径哟。4.注意这些路径里面的空格，可能会很坑！' },
-        { 'value': '如何重返上一步操作？如何回退？',
-          'reasons': '',
-          'solve': ' ctrl+z' },
-        { 'value': 'search云函数调用了数据库操作的api，为什么不直接在函数里调用api',
-          'reasons': '',
-          'solve': ' 这是可以的' },
-        { 'value': '查找图片时往上翻文件夹是.. /，往下翻用什么？（如何用相对路径来使用名为xx的图片？）',
-          'reasons': '',
-          'solve': ' 往下翻用文件名就OK（e.g：../../images/gogogo.png）' },
-        { 'value': ' 如何用绝对路径来使用名为xx的图片？',
-          'reasons': '',
-          'solve': ' 可以参考电脑文件的绝对路径，例如：C:\windows\system32\cmd.exe，是从盘开始的路径。' },
-        { 'value': '为什么会提示"a"未定义呢（error：‘a’ is no defined）',
-          'reasons': '1.在js文件中很可能是在没有定义变量a的情况下就使用了变量a。比如：Var b ，len   len=a+b ',
-          'solve': ' 1.在js文件中尝试将a定义出来。2.可以试试在wxml文件中对变量a进行数据绑定。3.注意一下有没有与a相关的变量名打错了' },
-        { 'value': '云控制台上显示了向数据库有读取记录，但是为什么hello集合里显示不出数据呢。昨天还可以，从今天开始就不行了？',
-          'reasons': '',
-          'solve': ' 1.试试重启，有可能是IDE问题。2.可能是在对数据进行删改的时候没有进行commit，切记要保存！' },
-        { 'value': '云函数的回调结果不是预期的结果',
-          'reasons': '1、有可能是在更改云函数代码后，没有重新部署 2、误改动原来的云函数',
-          'solve': ' 1.重新部署云函数  2、仔细检查原来的函数是否正确' },
-        { 'value': '为何在数据比较时出现报错？',
-          'reasons': '1.数据绑定的方式不对。2.也有可能在比较时错误的用到了”=”。',
-          'solve': ' 1.按照这样的形式进行数据绑定："{{xxx}}".2.试着检查一下是否出现了原因2中的情况，比较中有“=”号的地方替换为“==”号。' },
-        { 'value': '请问读取时为何出错（提交正常，云数据库有正常显示）',
-          'reasons': '1.有可能是将setData写成了诸如setData1，setData 2 这些不是自定义东西。（note: setData是原生语法）' +
-          '2.函数内部嵌套时不能用this，如果这么做，会出现报错（this.setData is not a function; at api cloud. callFunction success callback function）',
-          'solve': ' 1.检查是否出现类似于将setData写成setData1的情况。2.定义一个that来代替this的职责（note: var that=this）' },
-        { 'value': ' 如何调整按钮大小?(字体的大小)',
-          'reasons': '',
-          'solve': '利用wxss中的属性size，设置size的值。E.g：size:30px;对于字体的大小，试试font-size属性。' +
-          '具体可以参考：https://blog.csdn.net/wendyNo/article/details/105858153' },
-        { 'value': '为何点击按钮后没有反应？',
-          'reasons': '1.可能是js中与按钮反应相关的变量拼写错误。2.如果该按钮和页面跳转相关的话，有可能在app.json文件中没有对应的页面路径。' +
-          '此外，在app.json文件中路径的名字不小心写错了也会出现类似的情况哟。',
-          'solve': ' 1.检查js文件中与wxml文件中变量的拼写是否正确。2.检查一下对应路径有没有在app.json文件中。若没有，试试手动添加对应的路径。' +
-          '其次，检查一下路径名是否正确，这个点很坑!' },
-        { "value": "text和view是等效的吗？",
-          "reasons": "",
-          "solve" :"不是的，view有独占一行效果，（note:在这里view相当于html的div标签而text是文本标签，详情参考：https://blog.csdn.net/qq_44973159/article/details/104859304)" },
-        { "value": "改动原来代码后onLoad函数出错",
-          "reasons": "1.对函数内部的嵌套函数不清楚。2.onLoad函数没有删全，只删了上半部分，下半部分没有删掉",
-          "solve" :"1. 多去编写代码这个问题会被解决“2.检查一下onLoad函数的完整性。"},
-
-      ]
+      API.getdebugslist({}).then(res => {
+        console.log(res)
+        this.questions = res.msg
+      }).catch(_ => {
+        console.log('失败')
+      })
     },
     querySearchAsync(queryString, cb) {
+      console.log(this.state)
       var questions = this.questions
       var results = queryString ? questions.filter(this.createStateFilter(queryString)) : questions
+      this.getResults = null
+      this.getResults = results
+      // 这里需要写一个逻辑
       cb(results)
-
     },
-    createStateFilter(queryString){
-      console.log(queryString.split("").length)
+    createStateFilter(queryString) {
+      /* 如果输入的词与记录不匹配，不予显示。
+      原先在匹配的位置使用了函数，但是现在不用函数了，效率得到了提高
+      */
       return (state) => {
-        return (state.value.toLowerCase().indexOf(queryString.toLowerCase()) === located(state,queryString))
+        state.value = state.detail
+        return (state.detail.toLowerCase().indexOf(queryString.toLowerCase()) !== -1)
       }
-      this.seen = false;
     },
-    handleSelect(item) {
-      console.log(item)
-      while(this.tableData.length !=0)
-      {
-        this.tableData.pop()
+    // 搜索键用的函数，对应第二条支线
+    search() {
+      this.select = true
+      this.isSearch = true
+      console.log(this.length)
+      if (this.getResults != null && this.state !== '') {
+        this.seen = false
+        this.tableData = null
+        this.tableData = this.getResults
+        console.log(this.getResults)
       }
-      this.seen = false
-      this.tableData.push(item)
-    },
-    handleChange(item){
-      console.log(item.split("").length)
-      if(item.split("").length == 0)
-      {
-        this.seen = true
-        var data = [
-         {
-          value: "改动原来代码后onLoad函数出错",
-          reasons: "1.对函数内部的嵌套函数不清楚。2.onLoad函数没有删全，只删了上半部分，下半部分没有删掉",
-          solve :"1.多去编写代码这个问题会被解决。2.检查一下onLoad函数的完整性。",
-          tag :"onLoad函数" + " js"},
-         { value: '图片无法显示（音频无法播放）（会出现报错：Failed to load local image resource /images/xx.png）',
+      this.unfindResult = true
+      // 恢复搜索推荐，如何改进逻辑？
+      if (this.state === '' && this.select === true) {
+        var data = [{
+          serial: 63,
+          value: '改动原来代码后onLoad函数出错',
+          reasons: '1.对函数内部的嵌套函数不清楚。2.onLoad函数没有删全，只删了上半部分，下半部分没有删掉',
+          solve: '1.多去编写代码这个问题会被解决。2.检查一下onLoad函数的完整性。',
+          tag: ['onLoad函数', '  js'] },
+        { serial: 8,
+          value: '图片无法显示（音频无法播放）（会出现报错：Failed to load local image resource /images/xx.png）',
           reasons: '1.图片（音频）的名称里面混有中文字符（包含中文逗号等）。2.是在代码中图片（音频）的路径不对' +
           '3.可能图片的位置被无意间改动了。4.图片命名里可能有空格。',
           solve: '1.检查一下图片（音频）的名称里面是否有中文字符，如果有，对图片（音频）文件重命名。2.检查一下代码里面所写的程序路径是否正确。' +
           '3.回想一下之前有没有把图片（音频）移动了位置，如果图片移动过位置的话，在小程序里面也要改相应的路径哟。4.注意这些路径里面的空格，可能会很坑！',
-          tag: '图片' + ' 音频' + ' Failed to load'},
-         { value: "显示上传成功了，但是数据库里面没有需要的东西，且没有报错（或者是数据上传得太慢了）",
-          reasons: "1. wxml文件中与绑定上传相关的代码（如bindinput）拼写有误。2.有可能是data后面没有加数组下标（e.g：data[0]）。" +
-          '（note: 这时会出现提示：Setting data field "xx" to undefined is invalid。因为data是数组名，无法从数组名中读取信息（具体原因将在c++课程中第四章学习））'
-          + "3.数据库中的集合名和代码里面的集合名不一致。",
-          solve :"1.尝试刷新，有时候这里反应很慢 2.试试检查一下wxml文件中有关的地方，这里拼写不对是不会报错的哟。3. 试试给data数组添加下标。" +
-          "4 注意检查代码中的集合名与数据库中的集合名是否一致。",
-          tag :"没有报错" + " js" + "上传" },
-         { value: "在手写体识别时，出现签名串错误，在多次检查，重做后，问题没有解决。并且出现了新的报错：uploadFile：fail time out",
-          reasons: "1.签名串本身有错误，比如说少了一个字母。2.签名串某一处（特别是结尾与开头处）出现空格。",
-          solve :"1.检查一下签名串中是否出现空格，这个点很坑！2.检查一下签名串自身有没有缺少字母！",
-          tag :"签名串错误" + " js" + "uploadFile" },
-         { value: "读取数据库中数据时没有报错，但是就是读取不出来",
-          reasons: "在云函数中读取函数中写的数据库名与js中读取函数中写的数据库名字不一样。",
-          solve :"试试检查一下云函数中的数据库名与js中读取函数的数据库名是否一致。",
-          tag :"读取" + " js" }
+          tag: ['图片与音频', ' 相对路径', '  Failed to load'] },
+        { serial: 39,
+          value: '显示上传成功了，但是数据库里面没有需要的东西，且没有报错（或者是数据上传得太慢了）',
+          reasons: '1. wxml文件中与绑定上传相关的代码（如bindinput）拼写有误。2.有可能是data后面没有加数组下标（e.g：data[0]）。' +
+          '（note: 这时会出现提示：Setting data field "xx" to undefined is invalid。因为data是数组名，无法从数组名中读取信息（具体原因将在c++课程中第四章学习））' +
+          '3.数据库中的集合名和代码里面的集合名不一致。',
+          solve: '1.尝试刷新，有时候这里反应很慢 2.试试检查一下wxml文件中有关的地方，这里拼写不对是不会报错的哟。3. 试试给data数组添加下标。' +
+          '4 注意检查代码中的集合名与数据库中的集合名是否一致。',
+          tag: ['没有报错', '  js', '  上传'] },
+        { serial: 20,
+          value: '如何调整按钮大小?(字体的大小)',
+          reasons: '',
+          solve: '利用wxss中的属性size，设置size的值。E.g：size:30px;',
+          tag: ['大小属性', '  wxss'] },
+        { serial: 30,
+          value: '读取数据库中数据时没有报错，但是就是读取不出来',
+          reasons: '在云函数中读取函数中写的数据库名与js中读取函数中写的数据库名字不一样。',
+          solve: '试试检查一下云函数中的数据库名与js中读取函数的数据库名是否一致。',
+          tag: ['读取', ' js'] },
+        { serial: 21,
+          value: '为何点击按钮后没有反应？',
+          reasons: '1.可能是js中与按钮反应相关的变量拼写错误。2.如果该按钮和页面跳转相关的话，有可能在app.json文件中没有对应的页面路径。' +
+          '此外，在app.json文件中路径的名字不小心写错了也会出现类似的情况哟。',
+          solve: ' 1.检查js文件中与wxml文件中变量的拼写是否正确。2.检查一下对应路径有没有在app.json文件中。若没有，试试手动添加对应的路径。' +
+          '其次，检查一下路径名是否正确，这个点很坑!',
+          tag: ['js', ' 没有反应'] }
         ]
-        this.tableData.pop();
-        for(var i=0;i<data.length;i++)
-        {
-           this.tableData.push(data[i])
-        }
+        this.seen = true
+        this.select = false
+        this.tableData.pop()
+        this.tableData = null
+        this.tableData = data
+        this.unfindResult = false
       }
     },
-    handleSetLineChartData(type) {
-      this.lineChartData = lineChartData[type]
+    handleSelect(item) {
+      console.log(this.tableData.length)
+      console.log(item)
+      this.unfindResult = false
+      // 把原来的推荐记录去掉。再想想这么样提高去掉推荐记录的效率！在前一个版本利用pop() and push()来实现
+      this.tableData.splice(0, this.tableData.length, item)
+      this.seen = false
+      this.select = true
+    },
+    handleFilter() {
+      this.loadAll()
+    },
+    // 用于行展开
+    clickRowHandle(row, column, event) {
+      if (this.expands.includes(row.serial)) {
+        this.expands = this.expands.filter(val => val !== row.serial)
+      } else {
+        this.expands.push(row.serial)
+      }
+    },
+    handleChange(item) {
+      if (item.split('').length === 0) {
+        this.unfindResult = false
+      }
+    },
+    // 以下都是用于编辑bug库内容的函数
+    handleModifyStatus(row, status) {
+      this.$message({
+        message: '操作Success',
+        type: 'success'
+      })
+    },
+    handleCreate() {
+      this.resetTemp()
+      this.dialogStatus = 'create'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['deltaForm'].clearValidate()
+      })
+    },
+    createData() {
+      this.$refs['deltaForm'].validate((valid) => {
+        if (valid) {
+          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
+          createArticle().then(() => {
+            this.dialogFormVisible = false
+            this.$notify({
+              title: 'Success',
+              message: 'Created Successfully',
+              type: 'success',
+              duration: 2000
+            })
+          })
+        }
+      })
+    },
+    handleUpdate(row) {
+      this.temp = Object.assign({}, row) // copy obj
+      this.temp.timestamp = new Date(this.temp.timestamp)
+      this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['deltaForm'].clearValidate()
+      })
+    },
+    updateData() {
+      this.$refs['deltaForm'].validate((valid) => {
+        if (valid) {
+          // 注意：tableData是数组名，记得把tableData改成待操作的数组
+          const index = this.tableData.findIndex(v => v.id === this.temp.id)
+          console.log(index)
+          this.tableData.splice(index, 1, this.temp)
+          var serial = this.tableData[index].serial
+          var question = this.tableData[index].value
+          // uesd for test
+          var classify = null
+          var detail = this.tableData[index].solve
+          var tag = JSON.stringify(this.tableData[index].tag)
+          console.log(serial)
+          console.log(question)
+          API.updateList({
+            serial: 1,
+            question,
+            classify,
+            detail,
+            tag
+          }).then(res => {
+            console.log(res)
+          }).catch(_ => {
+            console.log(_)
+            if (_.successFlag === 'Y') {
+              this.$notify({
+                title: '成功！',
+                message: '修改成功！',
+                type: 'success'
+              })
+              this.dialogFormVisible = false
+              console.log('上传成功')
+            } else {
+              this.$notify({
+                title: '出错了{>~<}',
+                message: '系统繁忙，提交失败',
+                type: 'error'
+              })
+              console.log('系统繁忙，提交失败了')
+              return false
+            }
+          })
+        }
+      })
+    },
+    handleDelete(row, index) {
+      this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.tableData.splice(index, 1)
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    handleFetchPv(pv) {
+      fetchPv(pv).then(response => {
+        this.pvData = response.data.pvData
+        this.dialogPvVisible = true
+      })
     }
   }
-}
-function located(state,queryString){
-  var posi;
-  // 如果输入的词与记录不匹配，不予显示
-  if(state.value.toLowerCase().indexOf(queryString.toLowerCase())!== -1) {
-    posi = state.value.toLowerCase().indexOf(queryString.toLowerCase());
-  }
-  return posi;
 }
 </script>
 
@@ -298,7 +458,6 @@ function located(state,queryString){
   padding: 32px;
   background-color: rgb(240, 242, 245);
   position: relative;
-
 
   .chart-wrapper {
     background: #fff;
