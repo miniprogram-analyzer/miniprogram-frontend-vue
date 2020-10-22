@@ -69,6 +69,7 @@
           </el-form-item>
         </el-form>
       </div>
+      <!--
       <div class="header">
         <h1>修改密码</h1>
         <el-divider></el-divider>
@@ -97,6 +98,7 @@
           </el-form-item>
         </el-form>
       </div>
+      -->
     </div>
   </div>
 </template>
