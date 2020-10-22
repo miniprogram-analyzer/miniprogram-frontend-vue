@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 ## Features
 
@@ -16,7 +15,7 @@
 
 ```bash
 # clone the project
-git clone https://github.com/PanJiaChen/vue-element-admin.git
+git clone https://github.com/miniprogram-analyzer/miniprogram-frontend-vue.git
 
 # enter the project directory
 cd vue-element-admin
@@ -27,8 +26,6 @@ npm install
 # develop
 npm run dev
 ```
-
-This will automatically open http://localhost:9527
 
 ## Build
 
@@ -55,4 +52,3 @@ npm run lint
 # code format check and auto fix
 npm run lint -- --fix
 ```
->>>>>>> 1
