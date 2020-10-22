@@ -18,7 +18,7 @@
 git clone https://github.com/miniprogram-analyzer/miniprogram-frontend-vue.git
 
 # enter the project directory
-cd vue-element-admin
+cd miniprogram-frontend-vue
 
 # install dependency
 npm install
